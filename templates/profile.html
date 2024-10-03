@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Profile</title>
+
+    <!-- For Logo -->
+    <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='logo/logo.png') }}"/>
+
+    <!-- Custom fonts for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}">
+
+    <!-- Custom styles for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        {% block sidebar %}
+            {% if 'staff' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarStaff.html' %}  
+            {% elif 'admin' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarAdmin.html' %} 
+            {% elif 'doctor' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarDoctor.html' %}
+            {% elif 'patient' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarPatient.html' %}  
+            {% endif %}
+        {% endblock %}
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                {% block navbar %}
+                    {% if 'staff' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarStaff.html' %}  
+                    {% elif 'admin' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarAdmin.html' %}  
+                    {% elif 'doctor' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarDoctor.html' %}
+                    {% elif 'patient' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarPatient.html' %} 
+                    {% endif %}
+                {% endblock %}
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid ">
+
+                    <div class="row">
+                        <div class="col-md-2"></div>
+
+                        <div class="col-md-8">
+                            <div class="p-3 py-5">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h4 class="text-right">Profile Settings</h4>
+                                </div>
+                                <form method="POST" action="/update-profile" onsubmit="return validateForm()">
+                                    <div class="row mt-2">
+                                        <div class="col-md-12"><label class="labels">Name</label><input type="text" class="form-control" id="name" name="name" placeholder="enter name" value="{{ session['user_detail'][1] }}"></div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-12"><label class="labels">Email</label><input type="text" class="form-control" id="email" name="email" value="{{ session['user_detail'][2] }}" disabled></div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-12"><label class="labels">Password</label><input type="password" class="form-control" id="password" name="password" placeholder="*********" value="{{ session['user_detail'][3] }}"></div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-12"><label class="labels">Contact Number</label><input type="text" class="form-control" id="contact_number" name="contact_number" placeholder="enter contact number" value="{{ session['user_detail'][4] }}"></div>
+                                    </div>
+                                    <div class="mt-5 text-center"><button class="btn btn-info profile-button" type="submit">Save Profile</button></div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2"></div>
+
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+                
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="static/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="static/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="static/js/demo/datatables-demo.js"></script>
+
+    <!-- Validation Script -->
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const password = document.getElementById('password').value;
+            const contactNumber = document.getElementById('contact_number').value;
+            const nameRegex = /^(?=.*[a-zA-Z])[a-zA-Z\s]+$/;
+            const contactNumberRegex = /^[8-9][0-9]{7}$/;
+
+            if (!nameRegex.test(name)) {
+                alert("Name should start with letter and only contain letters and spaces.");
+                return false;
+            }
+
+            if (password.length < 8) {
+                alert("Password should be at least 8 characters long.");
+                return false;
+            }
+
+            if (!contactNumberRegex.test(contactNumber)) {
+                alert("Contact number should be more than 7-digit number and starts with 8/9.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+
+</body>
+
+</html>

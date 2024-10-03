@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>User Management</title>
+
+    <!-- For Logo -->
+    <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='logo/logo.png') }}"/>
+
+    <!-- Custom fonts for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}">
+
+    <!-- Custom styles for this page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        {% block sidebar %}
+            {% if 'staff' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarStaff.html' %}  
+            {% elif 'admin' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarAdmin.html' %} 
+            {% elif 'doctor' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarDoctor.html' %}
+            {% elif 'patient' in session['user_detail'][5] %}
+                {% include 'includes/_sidebarPatient.html' %}  
+            {% endif %}
+        {% endblock %}
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                {% block navbar %}
+                    {% if 'staff' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarStaff.html' %}  
+                    {% elif 'admin' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarAdmin.html' %}  
+                    {% elif 'doctor' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarDoctor.html' %}
+                    {% elif 'patient' in session['user_detail'][5] %}
+                        {% include 'includes/_navbarPatient.html' %} 
+                    {% endif %}
+                {% endblock %}
+
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- DataTables -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between">
+                            <h6 class="my-auto font-weight-bold text-info">Users</h6>
+                            <button class="btn btn-info" type="submit" data-toggle="modal" data-target="#addbtn">
+                                <i class="fas fa-plus fa-sm mr-2"></i>
+                                Add
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>UserID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Password</th>
+                                            <th>Contact Number</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in user_data %}
+                                            {% if user[5] == 'admin' %}
+                                            <tr>
+                                                <td>{{ user[0] }}</td>
+                                                <td>{{ user[1] }}</td>
+                                                <td>{{ user[2] }}</td>
+                                                <td>{{ user[3] }}</td>
+                                                <td>{{ user[4] }}</td>
+                                                <td>{{ user[5] }}</td>
+                                                <td></td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td>{{ user[0] }}</td>
+                                                <td>{{ user[1] }}</td>
+                                                <td>{{ user[2] }}</td>
+                                                <td>{{ user[3] }}</td>
+                                                <td>{{ user[4] }}</td>
+                                                <td>{{ user[5] }}</td>
+                                                <td class="d-flex justify-content-start">
+                                                    <button class="btn btn-warning mr-4" type="button" onclick="openEditModal('{{ user[0] }}','{{ user[1] }}','{{ user[2] }}','{{ user[3] }}','{{ user[4] }}','{{ user[5] }}')"> <i class="fas fa-edit fa-sm mr-2"></i>Edit </button>
+                                                    <button class="btn btn-danger" type="button" onclick="openDeleteModal('{{ user[0] }}')"> <i class="fas fa-trash fa-sm mr-2"></i>Delete </button>
+                                                </td>
+                                            </tr>
+                                            {% endif  %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Add button modal -->
+    <div class="modal fade" id="addbtn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <form method="POST" action="/add-user-management-admin">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="add_name" class="col-form-label">Name: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_name" name="add_name" placeholder="Dummy1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_email" class="col-form-label">Email: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="add_email" name="add_email" placeholder="dummy1@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_password" class="col-form-label">Password: <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="add_password" name="add_password" placeholder="********" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_contact_number" class="col-form-label">Contact Number: <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="add_contact_number" name="add_contact_number" placeholder="12345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="add_role" class="col-form-label">Role: <span class="text-danger">*</span></label>
+                            <select class="form-control" id="add_role" name="add_role" required>
+                                <option value="" selected disabled hidden>Please select a role</option>
+                                <option value="staff">Staff</option>
+                                <option value="doctor">Doctor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit button modal -->
+    <div class="modal fade" id="editbtn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <form method="POST" action="/update-user-management-admin">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="edit_id" name="edit_id" hidden>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_name" class="col-form-label">Name: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_name" name="edit_name" placeholder="Dummy" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_email" class="col-form-label">Email: <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_email" name="edit_email" placeholder="dummy1@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_password" class="col-form-label">Password: <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="edit_password" name="edit_password" placeholder="********" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_contact_number" class="col-form-label">Contact Number: <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="edit_contact_number" name="edit_contact_number" placeholder="12345678" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit_role" class="col-form-label">Role: <span class="text-danger">*</span></label>
+                            <select class="form-control" id="edit_role" name="edit_role" required>
+                                <option value="staff">Staff</option>
+                                <option value="doctor">Doctor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal-->
+    <div class="modal fade" id="deletebtn" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete?</div>
+                <form method="POST" action="/delete-user-management-admin">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="delete_id" name="delete_id" hidden>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEditModal(userId,userName,userEmail,userPassword,userContactNumber,userRole) {
+            $('#editbtn').modal('show'); // Show the modal
+            $('#edit_id').val(userId);
+            $('#edit_name').val(userName);
+            $('#edit_email').val(userEmail);
+            $('#edit_password').val(userPassword);
+            $('#edit_contact_number').val(userContactNumber);
+            $('#edit_role').val(userRole);
+        }
+        function openDeleteModal(userId) {
+            $('#deletebtn').modal('show'); // Show the modal
+            $('#delete_id').val(userId);
+        }
+    </script>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <script src="static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="static/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="static/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="static/js/demo/datatables-demo.js"></script>
+
+</body>
+
+</html>
