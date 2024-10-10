@@ -18,7 +18,7 @@ medicine_purchase_record = db['medicine_purchase_record']
 # Set up MySQL client
 app.config['MYSQL_HOST'] = "localhost"
 app.config['MYSQL_USER'] = "root"
-app.config['MYSQL_PASSWORD'] = ""
+app.config['MYSQL_PASSWORD'] = "password"
 app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
 
 mysql = MySQL(app)

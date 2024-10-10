@@ -34,7 +34,7 @@
    app.config['MYSQL_HOST'] = "localhost"
    app.config['MYSQL_USER'] = "root"
    app.config['MYSQL_PASSWORD'] = ""
-   app.config['MYSQL_DB'] = "P1_D4_Project_DB"
+   app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
    ```
    
    - Default MySQL port is 3306. To reconfigure, add:
