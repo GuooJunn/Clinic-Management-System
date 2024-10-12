@@ -22,6 +22,12 @@ app.config['MYSQL_PASSWORD'] = "testtest"
 app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
 #app.config['MYSQL_PORT'] = 3306  # MySQL default port
 
+## Set up MySQL client(Local)
+#app.config['MYSQL_HOST'] = "localhost"
+#app.config['MYSQL_USER'] = "root"
+#app.config['MYSQL_PASSWORD'] = "password"
+#app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
+
 mysql = MySQL(app)
 
 # ================================================================

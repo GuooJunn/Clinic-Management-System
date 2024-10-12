@@ -15,12 +15,11 @@ appointment_record = db['appointment_record']
 appointment_history_record = db['appointment_history_record']
 medicine_purchase_record = db['medicine_purchase_record']
 
-# Set up RDS
-app.config['MYSQL_HOST'] = "clouddb-app.crjeb832w24x.us-east-1.rds.amazonaws.com"
-app.config['MYSQL_USER'] = "admin"
-app.config['MYSQL_PASSWORD'] = "testtest"
+## Set up MySQL client(Local)
+app.config['MYSQL_HOST'] = "localhost"
+app.config['MYSQL_USER'] = "root"
+app.config['MYSQL_PASSWORD'] = "password"
 app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
-#app.config['MYSQL_PORT'] = 3306  # MySQL default port
 
 mysql = MySQL(app)
 
@@ -46,7 +45,7 @@ def auth_login():
         cur = mysql.connection.cursor()
 
         # Execute SQL query to select user based on email and password
-        result = cur.execute("SELECT * FROM users WHERE user_email=%s AND user_password=%s", (email_input,password_input,))
+        result = cur.execute("SELECT * FROM USERS WHERE user_email=%s AND user_password=%s", (email_input,password_input,))
         auth_data = cur.fetchall()
 
         # Close the cursor
@@ -130,39 +129,39 @@ def dashboard_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT count(schedule_id) FROM schedule")
+        cur.execute("SELECT count(schedule_id) FROM SCHEDULE")
         # Fetch the updated data
         schedule_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='A+'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='A+'")
         # Fetch the updated data
         bloodAplus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='A-'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='A-'")
         # Fetch the updated data
         bloodAminus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='B+'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='B+'")
         # Fetch the updated data
         bloodBplus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='B-'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='B-'")
         # Fetch the updated data
         bloodBminus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='AB+'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='AB+'")
         # Fetch the updated data
         bloodABplus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='AB-'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='AB-'")
         # Fetch the updated data
         bloodABminus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='O+'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='O+'")
         # Fetch the updated data
         bloodOplus_data = cur.fetchall()
         # Execute SELECT statement to fetch patient blood type data
-        cur.execute("SELECT count(patient_id) FROM patient_record WHERE patient_blood_type='O-'")
+        cur.execute("SELECT count(patient_id) FROM PATIENT_RECORD WHERE patient_blood_type='O-'")
         # Fetch the updated data
         bloodOminus_data = cur.fetchall()
         # Close the cursor
@@ -217,7 +216,7 @@ def patient_records_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated patient_record data
-        cur.execute("SELECT * FROM patient_record")
+        cur.execute("SELECT * FROM PATIENT_RECORD")
         # Fetch the updated data
         data = cur.fetchall()
         # Close the cursor
@@ -245,7 +244,7 @@ def add_patient_records_staff():
         cur = mysql.connection.cursor()
 
         # Check if the patient_nric already exists
-        cur.execute("SELECT * FROM patient_record WHERE patient_nric = %s", (nirc_input,))
+        cur.execute("SELECT * FROM PATIENT_RECORD WHERE patient_nric = %s", (nirc_input,))
         existing_patient = cur.fetchone()
 
         if existing_patient:
@@ -255,7 +254,7 @@ def add_patient_records_staff():
             return redirect(url_for('patient_records_staff'))
 
         # Execute INSERT statement to add patient_record data
-        cur.execute("INSERT INTO patient_record (patient_name, patient_age, patient_gender, patient_blood_type, patient_medical_condition, patient_date_of_enrollment, patient_date_of_last_update, patient_covid_vacc_status, patient_allergies, patient_nric) VALUE (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+        cur.execute("INSERT INTO PATIENT_RECORD (patient_name, patient_age, patient_gender, patient_blood_type, patient_medical_condition, patient_date_of_enrollment, patient_date_of_last_update, patient_covid_vacc_status, patient_allergies, patient_nric) VALUE (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
                     (name_input, age_input, gender_input, blood_type_input, medical_condition_input, today_date, today_date, covid_vacc_status_input, allergies_input, nirc_input))
         # Commit the transaction
         mysql.connection.commit()
@@ -270,19 +269,19 @@ def schedule_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM schedule s, patient_record p, users u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id")
+        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM SCHEDULE s, PATIENT_RECORD p, USERS u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id")
         # Fetch the updated data
         manual_schedule_data = cur.fetchall()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.patient_id, s.staff_id,  p.patient_name FROM schedule s, patient_record p WHERE s.patient_id=p.patient_id AND s.staff_id IS NULL")
+        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.patient_id, s.staff_id,  p.patient_name FROM SCHEDULE s, PATIENT_RECORD p WHERE s.patient_id=p.patient_id AND s.staff_id IS NULL")
         # Fetch the updated data
         appointment_schedule_data = cur.fetchall()
         # Execute SELECT statement to fetch patient name data
-        cur.execute("SELECT patient_id, patient_name FROM patient_record")
+        cur.execute("SELECT patient_id, patient_name FROM PATIENT_RECORD")
         # Fetch the updated data
         patient_data = cur.fetchall()
         # Execute SELECT statement to fetch doctor name data
-        cur.execute("SELECT user_id, user_name FROM users WHERE user_role='doctor'")
+        cur.execute("SELECT user_id, user_name FROM USERS WHERE user_role='doctor'")
         # Fetch the updated data
         doctor_data = cur.fetchall()
         # Close the cursor
@@ -306,7 +305,7 @@ def add_schedule_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute INSERT statement to add schedule data
-        cur.execute("INSERT INTO schedule (schedule_request_date, schedule_purpose_of_visit, schedule_remarks, schedule_creation_date, patient_id, staff_id) VALUE (%s, %s, %s, %s, %s, %s)", 
+        cur.execute("INSERT INTO Schedule (schedule_request_date, schedule_purpose_of_visit, schedule_remarks, schedule_creation_date, patient_id, staff_id) VALUE (%s, %s, %s, %s, %s, %s)", 
                     (request_date_input, purpose_input, remark_input, today_date, int(patient_id_input), int(doctor_id_input)))
         # Commit the transaction
         mysql.connection.commit()
@@ -328,7 +327,7 @@ def update_schedule_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute UPDATE statement to update schedule data
-        cur.execute("UPDATE schedule SET schedule_purpose_of_visit=%s, schedule_request_date=%s, schedule_remarks=%s, staff_id=%s WHERE schedule_id=%s", 
+        cur.execute("UPDATE Schedule SET schedule_purpose_of_visit=%s, schedule_request_date=%s, schedule_remarks=%s, staff_id=%s WHERE schedule_id=%s", 
                     (purpose_input, request_date_input, remark_input, int(doctor_id_input), id_input,))
         # Commit the transaction
         mysql.connection.commit()
@@ -354,7 +353,7 @@ def delete_schedule_staff():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute DELETE statement to delete schedule data
-        cur.execute("DELETE FROM schedule WHERE schedule_id=%s", (id_input,))
+        cur.execute("DELETE FROM Schedule WHERE schedule_id=%s", (id_input,))
         # Commit the transaction
         mysql.connection.commit()
         # Close the cursor
@@ -382,7 +381,7 @@ def dashboard_doctor():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT count(schedule_id) FROM schedule WHERE schedule_request_date=%s AND staff_id=%s",(today_date, session['user_detail'][0]))
+        cur.execute("SELECT count(schedule_id) FROM SCHEDULE WHERE schedule_request_date=%s AND staff_id=%s",(today_date, session['user_detail'][0]))
         # Fetch the updated data
         schedule_data = cur.fetchall()
         # Execute SELECT statement to fetch updated medicine data
@@ -402,7 +401,7 @@ def schedule_doctor():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM schedule s, patient_record p, users u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id")
+        cur.execute("SELECT s.schedule_id, s.schedule_request_date, s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM SCHEDULE s, PATIENT_RECORD p, USERS u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id")
         # Fetch the updated data
         data = cur.fetchall()
         # Close the cursor
@@ -418,7 +417,7 @@ def consultation_doctor(id):
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated schedule data
-        cur.execute("SELECT s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM schedule s, patient_record p, users u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id AND s.schedule_id=%s", (id,))
+        cur.execute("SELECT s.schedule_purpose_of_visit, s.schedule_remarks, s.patient_id, s.staff_id,  p.patient_name, u.user_name FROM SCHEDULE s, PATIENT_RECORD p, USERS u WHERE s.patient_id=p.patient_id AND s.staff_id=u.user_id AND s.schedule_id=%s", (id,))
         # Fetch the updated data
         data = cur.fetchall()
         # Execute SELECT statement to fetch updated medicine_inventory data
@@ -565,7 +564,7 @@ def medicine_inventory_doctor():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated medicine inventory data
-        cur.execute("SELECT * FROM medicine_inventory")
+        cur.execute("SELECT * FROM MEDICINE_INVENTORY")
         # Fetch the updated data
         data = cur.fetchall()
         # Close the cursor
@@ -655,15 +654,15 @@ def dashboard_admin():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated user type data
-        cur.execute("SELECT count(user_id) FROM users WHERE user_role='admin'")
+        cur.execute("SELECT count(user_id) FROM USERS WHERE user_role='admin'")
         # Fetch the updated data
         adminCount_data = cur.fetchall()
         # Execute SELECT statement to fetch updated user type data
-        cur.execute("SELECT count(user_id) FROM users WHERE user_role='staff'")
+        cur.execute("SELECT count(user_id) FROM USERS WHERE user_role='staff'")
         # Fetch the updated data
         staffCount_data = cur.fetchall()
         # Execute SELECT statement to fetch updated user type data
-        cur.execute("SELECT count(user_id) FROM users WHERE user_role='doctor'")
+        cur.execute("SELECT count(user_id) FROM USERS WHERE user_role='doctor'")
         # Fetch the updated data
         doctorCount_data = cur.fetchall()
         # Close the cursor
@@ -680,7 +679,7 @@ def user_management_admin():
         # Create a cursor to execute SQL queries
         cur = mysql.connection.cursor()
         # Execute SELECT statement to fetch updated user data
-        cur.execute("SELECT * FROM users")
+        cur.execute("SELECT * FROM USERS")
         # Fetch the updated data
         data = cur.fetchall()
         # Close the cursor
@@ -994,7 +993,7 @@ def update_profile():
         # Commit the transaction
         mysql.connection.commit()
         # Execute SELECT statement to fetch updated user data
-        cur.execute("SELECT * FROM users WHERE user_id=%s", (session['user_detail'][0],))
+        cur.execute("SELECT * FROM USERS WHERE user_id=%s", (session['user_detail'][0],))
         # Fetch the updated data
         data = cur.fetchall()
         # Close the cursor
