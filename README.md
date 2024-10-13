@@ -47,7 +47,10 @@
     You can choose to run the Flask app based on your preferred method:
     
     ```
-    flask run
+    flask run 
+    flask run --host=0.0.0.0 --port=5000
+
+    Website: http://23.23.130.142:5000/
     ```
 
     or go to app.py --> Click "Run" --> "Start Debugging" / "Run Without Debugging" 
