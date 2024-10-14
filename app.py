@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.secret_key = 'anything'
 
 # Set up MongoDB client
-client = MongoClient('mongodb://172.31.36.217:27017')
-#client = MongoClient('mongodb://34.196.179.164:27017')
+client = MongoClient('mongodb://172.31.36.217:27017') #Private IP Address
+#client = MongoClient('mongodb://34.196.179.164:27017') #Public IP Address
 db = client['Clinic_Cloud_DB']
 billing_record = db['billing_record']
 appointment_record = db['appointment_record']
