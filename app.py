@@ -8,8 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'anything'
 
 # Set up MongoDB client
-client = MongoClient('mongodb://172.31.36.217:27017') #Private IP Address
-#client = MongoClient('mongodb://34.196.179.164:27017') #Public IP Address
+client = MongoClient('mongodb://Public or Private Ip Address of your MongoDB:27017')
 db = client['Clinic_Cloud_DB']
 billing_record = db['billing_record']
 appointment_record = db['appointment_record']
@@ -17,9 +16,9 @@ appointment_history_record = db['appointment_history_record']
 medicine_purchase_record = db['medicine_purchase_record']
 
 # Set up RDS
-app.config['MYSQL_HOST'] = "clouddb-app.crjeb832w24x.us-east-1.rds.amazonaws.com"
-app.config['MYSQL_USER'] = "admin"
-app.config['MYSQL_PASSWORD'] = "testtest"
+app.config['MYSQL_HOST'] = "Amazon RDS Endpoint"
+app.config['MYSQL_USER'] = ""
+app.config['MYSQL_PASSWORD'] = ""
 app.config['MYSQL_DB'] = "Clinic_Cloud_DB"
 #app.config['MYSQL_PORT'] = 3306  # MySQL default port
 
@@ -1008,6 +1007,4 @@ def update_profile():
         return redirect(url_for('profile'))
 
 if __name__ == '__main__':
-    #app.run(debug=True)
-    #app.run(debug=True, host='0.0.0.0', port=5000)
     app.run(debug=True, host='23.23.130.142', port=5000)
